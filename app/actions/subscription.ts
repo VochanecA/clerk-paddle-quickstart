@@ -60,7 +60,7 @@ export async function createCheckoutSession() {
 
     // Placeholder response
     return {
-      checkoutUrl: '/api/paddle/checkout', // This will be replaced with actual Paddle checkout URL
+      checkoutUrl: '/checkout',
       sessionId: 'placeholder_session_id'
     }
   } catch (error) {
