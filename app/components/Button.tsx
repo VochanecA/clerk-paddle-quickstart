@@ -13,7 +13,7 @@ export function Button({
   onClick,
   className = ''
 }: ButtonProps) {
-  const baseStyles = 'rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 transition-all duration-200'
+  const baseStyles = 'rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 transition-all duration-200 cursor-pointer'
   
   const variants = {
     primary: 'bg-[#6c47ff]/90 hover:bg-[#6c47ff] text-white backdrop-blur-sm',
