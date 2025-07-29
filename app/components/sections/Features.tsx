@@ -8,7 +8,7 @@ function FeatureCard({ title, description, icon }: FeatureCardProps) {
   return (
     <div className="group relative">
       {/* Hover Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white/[.05] to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
+      <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/[.05] to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
       
       {/* Card Content */}
       <div className="relative p-8 rounded-2xl bg-white/[.02] border border-white/[.05] backdrop-blur-sm hover:bg-white/[.04] transition-all duration-300">
@@ -30,10 +30,10 @@ export function Features() {
   return (
     <div className="relative py-32 overflow-hidden">
       {/* Background Effects */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_#2a0e9d_0%,_#000_100%)] opacity-10" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_#064e3b_0%,_#000_100%)] opacity-10" />
       <div className="absolute inset-0">
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-violet-500/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-teal-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4">
@@ -41,7 +41,7 @@ export function Features() {
         <div className="text-center mb-16">
           {/* Section Badge */}
           <div className="mb-8 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[.03] backdrop-blur-sm border border-white/[.05] text-sm text-white/70">
-            <span className="inline-block w-2 h-2 rounded-full bg-violet-500 animate-pulse" />
+            <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             Built for Developers
           </div>
           

@@ -5,13 +5,13 @@ export function Hero() {
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
       {/* 3D Gradient Background */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_#6c47ff_0%,_#2a0e9d_50%,_#000_100%)] opacity-20" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_#10b981_0%,_#064e3b_50%,_#000_100%)] opacity-20" />
       <div className="absolute inset-0 bg-[linear-gradient(to_bottom,_transparent_0%,_#000_100%)] opacity-80" />
       
       {/* Floating Elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-1/2 left-1/4 w-96 h-96 bg-violet-500/30 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute top-1/4 -right-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
+        <div className="absolute -top-1/2 left-1/4 w-96 h-96 bg-emerald-500/30 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-1/4 -right-1/4 w-96 h-96 bg-teal-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
       </div>
 
       {/* Content */}
@@ -19,13 +19,13 @@ export function Hero() {
         {/* Overline */}
         <div className="mb-8 tracking-wide">
           <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[.03] backdrop-blur-sm border border-white/[.05] text-sm text-white/70">
-            <span className="inline-block w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+            <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             Open Source • MIT License
           </span>
         </div>
 
         {/* Main Title */}
-        <h1 className="text-6xl sm:text-7xl md:text-8xl font-bold mb-8 bg-clip-text text-transparent bg-[linear-gradient(to_right,_#fff_0%,_rgba(255,255,255,0.5)_100%)]  leading-[1.1]">
+        <h1 className="text-6xl sm:text-7xl md:text-8xl font-bold mb-8 bg-clip-text text-transparent bg-[linear-gradient(to_right,_#fff_0%,_rgba(255,255,255,0.5)_100%)] leading-[1.1]">
           <span className="block">Open Source.</span>
           <span className="block mt-1">Production Ready.</span>
         </h1>

@@ -3,7 +3,7 @@ import { Button } from '../Button'
 function FeatureList({ text }: { text: string }) {
   return (
     <div className="flex items-center gap-2 text-zinc-300">
-      <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg className="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
       </svg>
       {text}
@@ -39,17 +39,17 @@ export function Demos() {
   return (
     <div className="relative py-32 overflow-hidden">
       {/* Background Effects */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_#2a0e9d_0%,_#000_100%)] opacity-10" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_#064e3b_0%,_#000_100%)] opacity-10" />
       <div className="absolute inset-0">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-violet-500/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-teal-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           {/* Section Badge */}
           <div className="mb-8 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[.03] backdrop-blur-sm border border-white/[.05] text-sm text-white/70">
-            <span className="inline-block w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+            <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             Video Walkthroughs
           </div>
           
