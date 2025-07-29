@@ -25,7 +25,7 @@ export function Hero() {
         </div>
 
         {/* Main Title */}
-        <h1 className="text-6xl sm:text-7xl md:text-8xl font-bold mb-8 bg-clip-text text-transparent bg-[linear-gradient(to_right,_#fff_0%,_rgba(255,255,255,0.5)_100%)]">
+        <h1 className="text-6xl sm:text-7xl md:text-8xl font-bold mb-8 bg-clip-text text-transparent bg-[linear-gradient(to_right,_#fff_0%,_rgba(255,255,255,0.5)_100%)]  leading-[1.1]">
           <span className="block">Open Source.</span>
           <span className="block mt-1">Production Ready.</span>
         </h1>
@@ -33,7 +33,7 @@ export function Hero() {
         {/* Subtitle */}
         <p className="text-xl md:text-2xl text-zinc-400 mb-12 max-w-3xl mx-auto leading-relaxed">
           {PROJECT.DESCRIPTION}
-          <span className="block mt-2">Built for developers, by developers. Free forever.</span>
+          <span className="block mt-2 text-zinc-300">Built for developers, by developers. Free forever.</span>
         </p>
 
         {/* CTA Buttons */}
