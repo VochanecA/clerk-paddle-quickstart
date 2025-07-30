@@ -4,6 +4,13 @@ import { createClerkClient } from '@clerk/nextjs/server'
 
 const clerk = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY })
 
+// Calculate trial end date (7 days from now)
+function getTrialEndDate(startDate: Date): string {
+  const endDate = new Date(startDate)
+  endDate.setDate(endDate.getDate() + 7)
+  return endDate.toISOString()
+}
+
 export async function POST(request: Request) {
   try {
     const { userId } = await auth()
@@ -22,19 +29,23 @@ export async function POST(request: Request) {
       )
     }
 
+    // Calculate trial dates
+    const trialStartedAt = new Date()
+    const trialEndsAt = getTrialEndDate(trialStartedAt)
+
     // Update user metadata with trial status and Paddle customer ID
     await clerk.users.updateUserMetadata(userId, {
       privateMetadata: {
         paddleCustomerId: customerId,
         lastWebhookEvent: {
           type: 'checkout_completed',
-          timestamp: new Date().toISOString()
+          timestamp: trialStartedAt.toISOString()
         }
       },
       publicMetadata: {
         subscriptionStatus: 'trial',
-        trialStartedAt: new Date().toISOString(),
-        trialEndsAt: null // Will be updated by webhook
+        trialStartedAt: trialStartedAt.toISOString(),
+        trialEndsAt
       }
     })
 

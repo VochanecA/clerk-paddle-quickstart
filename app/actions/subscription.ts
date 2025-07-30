@@ -1,14 +1,12 @@
 'use server'
 
 import { auth, currentUser } from '@clerk/nextjs/server'
-
-// TODO: Replace with actual Paddle types
-type SubscriptionStatus = 'active' | 'inactive' | 'past_due' | 'cancelled'
+import { SubscriptionStatus } from '@/lib/paddle/utils'
 
 interface Subscription {
   status: SubscriptionStatus
-  plan: string
-  currentPeriodEnd: Date
+  trialEndsAt: string | null
+  paddleCustomerId?: string | null
 }
 
 export async function getSubscriptionStatus(): Promise<Subscription | null> {
@@ -20,27 +18,45 @@ export async function getSubscriptionStatus(): Promise<Subscription | null> {
       return null
     }
 
-    // TODO: Implement actual Paddle subscription check
-    // 1. Query your database for user's subscription
-    // 2. Verify with Paddle API
-    // 3. Return subscription details
+    // Get subscription status from Clerk metadata
+    const metadata = user.publicMetadata || {}
+    const privateMetadata = user.privateMetadata || {}
 
-    // This is a placeholder that checks if the user has a 'premium' metadata field
-    const hasSubscription = user.publicMetadata?.premium === true
-
-    console.log(user.publicMetadata)
-    console.log(user)
-    console.log(hasSubscription)
-    console.log(user.publicMetadata?.premium)
+    // Ensure we have valid subscription status or default to 'not_started'
+    const status = (metadata.subscriptionStatus as SubscriptionStatus) || 'not_started'
+    const trialEndsAt = metadata.trialEndsAt as string | null || null
+    const paddleCustomerId = privateMetadata.paddleCustomerId as string | null || null
 
     return {
-      status: hasSubscription ? 'active' : 'inactive',
-      plan: hasSubscription ? 'premium' : 'free',
-      currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+      status,
+      trialEndsAt,
+      paddleCustomerId
     }
   } catch (error) {
     console.error('Error fetching subscription:', error)
     return null
+  }
+}
+
+export async function isSubscriptionActive(): Promise<boolean> {
+  try {
+    const subscription = await getSubscriptionStatus()
+    
+    // If no subscription data, user doesn't have access
+    if (!subscription) return false
+
+    // Active subscriptions always have access
+    if (subscription.status === 'active') return true
+
+    // Trial access depends on trial end date
+    if (subscription.status === 'trial' && subscription.trialEndsAt) {
+      return new Date(subscription.trialEndsAt) > new Date()
+    }
+
+    return false
+  } catch (error) {
+    console.error('Error checking subscription status:', error)
+    return false
   }
 }
 
@@ -52,11 +68,6 @@ export async function createCheckoutSession() {
     if (!userId || !user) {
       throw new Error('User not authenticated')
     }
-
-    // TODO: Implement Paddle checkout session creation
-    // 1. Create a checkout session with Paddle
-    // 2. Store the session details in your database
-    // 3. Return the checkout URL or session ID
 
     // Placeholder response
     return {

@@ -1,24 +1,32 @@
 'use client'
 
-import { Button } from '@/app/components/Button'
+import { useState } from 'react'
 import { createCheckoutSession } from '@/app/actions/subscription'
-import { ReactNode, useState } from 'react'
+import { SubscriptionStatus } from '@/lib/paddle/utils'
 
 interface PremiumLockProps {
-  children: ReactNode
+  children: React.ReactNode
   subscriptionStatus: {
-    status: 'active' | 'inactive' | 'past_due' | 'cancelled'
-    plan: string
-    currentPeriodEnd: Date
+    status: SubscriptionStatus
+    trialEndsAt: string | null
   } | null
 }
 
 export function PremiumLock({ children, subscriptionStatus }: PremiumLockProps) {
   const [isLoading, setIsLoading] = useState(false)
-  const hasActiveSubscription = subscriptionStatus?.status === 'active'
+  
+  // User has access if:
+  // 1. Status is active, or
+  // 2. Status is trial and trial hasn't ended
+  const hasAccess = subscriptionStatus && (
+    subscriptionStatus.status === 'active' ||
+    (subscriptionStatus.status === 'trial' && 
+      subscriptionStatus.trialEndsAt && 
+      new Date(subscriptionStatus.trialEndsAt) > new Date())
+  )
 
-  // If user has an active subscription, show the content
-  if (hasActiveSubscription) {
+  // If user has access, show the content
+  if (hasAccess) {
     return <>{children}</>
   }
 
@@ -44,41 +52,18 @@ export function PremiumLock({ children, subscriptionStatus }: PremiumLockProps) 
 
       {/* Lock Overlay */}
       <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/20 backdrop-blur-sm">
-        <div className="text-center max-w-xl mx-auto p-8">
-          {/* Lock Icon */}
-          <div className="bg-white/[.05] p-6 rounded-full backdrop-blur-xl mb-6 inline-flex">
-            <svg 
-              className="w-12 h-12 text-white" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={1.5} 
-                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" 
-              />
-            </svg>
-          </div>
-
-          {/* Text */}
-          <h2 className="text-3xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">
-            Unlock Premium Features
-          </h2>
-          <p className="text-lg text-zinc-400 mb-8 max-w-md mx-auto">
-            Get access to advanced analytics, custom reports, and more with our premium plan.
+        <div className="bg-black/40 p-6 rounded-xl text-center max-w-md mx-auto">
+          <h3 className="text-xl font-semibold mb-2">Premium Feature</h3>
+          <p className="text-zinc-400 mb-4">
+            Upgrade your account to access this feature and much more.
           </p>
-
-          {/* CTA Button */}
-          <Button 
-            variant="primary" 
-            className="text-lg px-8"
+          <button
             onClick={handleUpgradeClick}
             disabled={isLoading}
+            className="bg-emerald-500 text-white px-4 py-2 rounded-lg hover:bg-emerald-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoading ? 'Loading...' : 'Upgrade to Premium →'}
-          </Button>
+            {isLoading ? 'Loading...' : 'Upgrade Now'}
+          </button>
         </div>
       </div>
     </div>
