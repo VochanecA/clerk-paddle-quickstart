@@ -1,4 +1,7 @@
 import { NextResponse } from 'next/server'
+import { createClerkClient } from '@clerk/nextjs/server'
+
+const clerk = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY })
 
 // Paddle webhook event types
 type WebhookEvent =
@@ -12,6 +15,9 @@ interface WebhookPayload {
   alert_name: WebhookEvent
   subscription_id: string
   user_id: string
+  status?: string
+  subscription_plan_id?: string
+  next_bill_date?: string
   [key: string]: any // For other event-specific fields
 }
 
@@ -40,19 +46,19 @@ export async function POST(request: Request) {
     // Handle different webhook events
     switch (payload.alert_name) {
       case 'subscription_created':
-        await handleSubscriptionCreated(payload)
+        await handleSubscriptionCreated(clerk, payload)
         break
       case 'subscription_updated':
-        await handleSubscriptionUpdated(payload)
+        await handleSubscriptionUpdated(clerk, payload)
         break
       case 'subscription_cancelled':
-        await handleSubscriptionCancelled(payload)
+        await handleSubscriptionCancelled(clerk, payload)
         break
       case 'subscription_payment_succeeded':
-        await handlePaymentSucceeded(payload)
+        await handlePaymentSucceeded(clerk, payload)
         break
       case 'subscription_payment_failed':
-        await handlePaymentFailed(payload)
+        await handlePaymentFailed(clerk, payload)
         break
       default:
         console.log(`Unhandled webhook event: ${payload.alert_name}`)
@@ -69,42 +75,113 @@ export async function POST(request: Request) {
 }
 
 // Webhook event handlers
-async function handleSubscriptionCreated(payload: WebhookPayload) {
-  // TODO: Implement subscription creation logic
-  // 1. Store subscription details in database
-  // 2. Update user metadata in Clerk
-  // 3. Send welcome email
-  console.log('Subscription created:', payload.subscription_id)
+async function handleSubscriptionCreated(clerk: any, payload: WebhookPayload) {
+  try {
+    await clerk.users.updateUserMetadata(payload.user_id, {
+      privateMetadata: {
+        paddleCustomerId: payload.subscription_id,
+        lastWebhookEvent: {
+          type: 'subscription_created',
+          timestamp: new Date().toISOString(),
+        }
+      },
+      publicMetadata: {
+        subscriptionStatus: 'active',
+        subscriptionPlan: payload.subscription_plan_id || 'premium',
+        premium: true
+      }
+    })
+    
+    console.log('Subscription created:', payload.subscription_id)
+  } catch (error) {
+    console.error('Error updating user metadata:', error)
+    throw error
+  }
 }
 
-async function handleSubscriptionUpdated(payload: WebhookPayload) {
-  // TODO: Implement subscription update logic
-  // 1. Update subscription details in database
-  // 2. Update user metadata if plan changed
-  // 3. Send confirmation email
-  console.log('Subscription updated:', payload.subscription_id)
+async function handleSubscriptionUpdated(clerk: any, payload: WebhookPayload) {
+  try {
+    await clerk.users.updateUserMetadata(payload.user_id, {
+      privateMetadata: {
+        lastWebhookEvent: {
+          type: 'subscription_updated',
+          timestamp: new Date().toISOString(),
+        }
+      },
+      publicMetadata: {
+        subscriptionStatus: payload.status || 'active',
+        subscriptionPlan: payload.subscription_plan_id
+      }
+    })
+    
+    console.log('Subscription updated:', payload.subscription_id)
+  } catch (error) {
+    console.error('Error updating user metadata:', error)
+    throw error
+  }
 }
 
-async function handleSubscriptionCancelled(payload: WebhookPayload) {
-  // TODO: Implement subscription cancellation logic
-  // 1. Update subscription status in database
-  // 2. Update user metadata in Clerk
-  // 3. Send cancellation email
-  console.log('Subscription cancelled:', payload.subscription_id)
+async function handleSubscriptionCancelled(clerk: any, payload: WebhookPayload) {
+  try {
+    await clerk.users.updateUserMetadata(payload.user_id, {
+      privateMetadata: {
+        lastWebhookEvent: {
+          type: 'subscription_cancelled',
+          timestamp: new Date().toISOString(),
+        }
+      },
+      publicMetadata: {
+        subscriptionStatus: 'cancelled',
+        subscriptionPlan: 'free',
+        premium: false
+      }
+    })
+    
+    console.log('Subscription cancelled:', payload.subscription_id)
+  } catch (error) {
+    console.error('Error updating user metadata:', error)
+    throw error
+  }
 }
 
-async function handlePaymentSucceeded(payload: WebhookPayload) {
-  // TODO: Implement payment success logic
-  // 1. Update payment status in database
-  // 2. Send receipt email
-  // 3. Update subscription renewal date
-  console.log('Payment succeeded:', payload.subscription_id)
+async function handlePaymentSucceeded(clerk: any, payload: WebhookPayload) {
+  try {
+    await clerk.users.updateUserMetadata(payload.user_id, {
+      privateMetadata: {
+        lastWebhookEvent: {
+          type: 'payment_succeeded',
+          timestamp: new Date().toISOString(),
+        }
+      },
+      publicMetadata: {
+        subscriptionStatus: 'active'
+      }
+    })
+    
+    console.log('Payment succeeded:', payload.subscription_id)
+  } catch (error) {
+    console.error('Error updating user metadata:', error)
+    throw error
+  }
 }
 
-async function handlePaymentFailed(payload: WebhookPayload) {
-  // TODO: Implement payment failure logic
-  // 1. Update payment status in database
-  // 2. Send payment failure notification
-  // 3. Handle subscription status change if needed
-  console.log('Payment failed:', payload.subscription_id)
+async function handlePaymentFailed(clerk: any, payload: WebhookPayload) {
+  try {
+    await clerk.users.updateUserMetadata(payload.user_id, {
+      privateMetadata: {
+        lastWebhookEvent: {
+          type: 'payment_failed',
+          timestamp: new Date().toISOString(),
+        }
+      },
+      publicMetadata: {
+        subscriptionStatus: 'past_due'
+      }
+    })
+    
+    console.log('Payment failed:', payload.subscription_id)
+  } catch (error) {
+    console.error('Error updating user metadata:', error)
+    throw error
+  }
 } 

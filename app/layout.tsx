@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { ClerkProvider } from '@clerk/nextjs'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Header } from './components/Header'
+import { AuthSetup } from './components/AuthSetup'
 import './globals.css'
 
 const geistSans = Geist({
@@ -28,8 +29,9 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-950 text-white`}>
+          <AuthSetup />
           <Header />
-          <main className="pt-16">
+          <main className="pt-0">
             {children}
           </main>
         </body>
