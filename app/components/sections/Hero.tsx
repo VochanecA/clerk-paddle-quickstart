@@ -3,7 +3,7 @@ import { PROJECT, SOCIAL_LINKS, EXTERNAL_LINKS } from '@/app/config/constants'
 
 export function Hero() {
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden pt-32">
+    <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden py-32">
       {/* 3D Gradient Background */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_#10b981_0%,_#064e3b_50%,_#000_100%)] opacity-20" />
       <div className="absolute inset-0 bg-[linear-gradient(to_bottom,_transparent_0%,_#000_100%)] opacity-80" />

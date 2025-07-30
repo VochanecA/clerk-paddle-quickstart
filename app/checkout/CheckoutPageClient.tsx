@@ -18,7 +18,7 @@ export default function CheckoutPageClient() {
   }, [])
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex">
+    <div className="min-h-[calc(100vh-4rem)] flex pt-16">
       {/* Left Side - Checkout Form */}
       <div className="flex-1 border-r border-white/[.05]">
         <div className="max-w-xl mx-auto px-8 py-12">
