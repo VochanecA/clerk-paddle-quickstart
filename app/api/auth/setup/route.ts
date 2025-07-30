@@ -21,16 +21,15 @@ export async function POST() {
     if (!user.publicMetadata || Object.keys(user.publicMetadata).length === 0) {
       await clerk.users.updateUserMetadata(userId, {
         privateMetadata: {
-          paddleCustomerId: null,
           lastWebhookEvent: {
             type: 'initial_setup',
             timestamp: new Date().toISOString(),
           }
         },
         publicMetadata: {
-          subscriptionStatus: 'inactive',
-          subscriptionPlan: 'free',
-          premium: false
+          subscriptionStatus: 'not_started',
+          trialStartedAt: null,
+          trialEndsAt: null
         }
       })
     }

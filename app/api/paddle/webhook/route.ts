@@ -5,20 +5,22 @@ const clerk = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY })
 
 // Paddle webhook event types
 type WebhookEvent =
-  | 'subscription_created'
-  | 'subscription_updated'
-  | 'subscription_cancelled'
-  | 'subscription_payment_succeeded'
-  | 'subscription_payment_failed'
+  | 'subscription.created'
+  | 'subscription.updated'
+  | 'subscription.activated'
+  | 'subscription.canceled'
+  | 'subscription.payment_succeeded'
+  | 'subscription.payment_failed'
 
 interface WebhookPayload {
-  alert_name: WebhookEvent
-  subscription_id: string
-  user_id: string
-  status?: string
-  subscription_plan_id?: string
-  next_bill_date?: string
-  [key: string]: any // For other event-specific fields
+  event_type: WebhookEvent
+  data: {
+    customer_id: string
+    subscription_id: string
+    status: string
+    next_bill_date?: string
+    trial_ends_at?: string
+  }
 }
 
 export async function POST(request: Request) {
@@ -42,26 +44,27 @@ export async function POST(request: Request) {
     //     { status: 401 }
     //   )
     // }
-    
+
     // Handle different webhook events
-    switch (payload.alert_name) {
-      case 'subscription_created':
-        await handleSubscriptionCreated(clerk, payload)
+    switch (payload.event_type) {
+      case 'subscription.created':
+      case 'subscription.activated':
+        await handleSubscriptionActive(clerk, payload)
         break
-      case 'subscription_updated':
+      case 'subscription.updated':
         await handleSubscriptionUpdated(clerk, payload)
         break
-      case 'subscription_cancelled':
+      case 'subscription.canceled':
         await handleSubscriptionCancelled(clerk, payload)
         break
-      case 'subscription_payment_succeeded':
+      case 'subscription.payment_succeeded':
         await handlePaymentSucceeded(clerk, payload)
         break
-      case 'subscription_payment_failed':
+      case 'subscription.payment_failed':
         await handlePaymentFailed(clerk, payload)
         break
       default:
-        console.log(`Unhandled webhook event: ${payload.alert_name}`)
+        console.log(`Unhandled webhook event: ${payload.event_type}`)
     }
 
     return NextResponse.json({ success: true })
@@ -75,24 +78,24 @@ export async function POST(request: Request) {
 }
 
 // Webhook event handlers
-async function handleSubscriptionCreated(clerk: any, payload: WebhookPayload) {
+async function handleSubscriptionActive(clerk: any, payload: WebhookPayload) {
   try {
-    await clerk.users.updateUserMetadata(payload.user_id, {
+    await clerk.users.updateUserMetadata(payload.data.customer_id, {
       privateMetadata: {
-        paddleCustomerId: payload.subscription_id,
+        paddleCustomerId: payload.data.customer_id,
         lastWebhookEvent: {
-          type: 'subscription_created',
+          type: payload.event_type,
           timestamp: new Date().toISOString(),
         }
       },
       publicMetadata: {
         subscriptionStatus: 'active',
-        subscriptionPlan: payload.subscription_plan_id || 'premium',
-        premium: true
+        trialStartedAt: new Date().toISOString(),
+        trialEndsAt: payload.data.trial_ends_at || null
       }
     })
     
-    console.log('Subscription created:', payload.subscription_id)
+    console.log('Subscription activated:', payload.data.subscription_id)
   } catch (error) {
     console.error('Error updating user metadata:', error)
     throw error
@@ -101,20 +104,20 @@ async function handleSubscriptionCreated(clerk: any, payload: WebhookPayload) {
 
 async function handleSubscriptionUpdated(clerk: any, payload: WebhookPayload) {
   try {
-    await clerk.users.updateUserMetadata(payload.user_id, {
+    await clerk.users.updateUserMetadata(payload.data.customer_id, {
       privateMetadata: {
         lastWebhookEvent: {
-          type: 'subscription_updated',
+          type: payload.event_type,
           timestamp: new Date().toISOString(),
         }
       },
       publicMetadata: {
-        subscriptionStatus: payload.status || 'active',
-        subscriptionPlan: payload.subscription_plan_id
+        subscriptionStatus: payload.data.status,
+        trialEndsAt: payload.data.trial_ends_at || null
       }
     })
     
-    console.log('Subscription updated:', payload.subscription_id)
+    console.log('Subscription updated:', payload.data.subscription_id)
   } catch (error) {
     console.error('Error updating user metadata:', error)
     throw error
@@ -123,21 +126,20 @@ async function handleSubscriptionUpdated(clerk: any, payload: WebhookPayload) {
 
 async function handleSubscriptionCancelled(clerk: any, payload: WebhookPayload) {
   try {
-    await clerk.users.updateUserMetadata(payload.user_id, {
+    await clerk.users.updateUserMetadata(payload.data.customer_id, {
       privateMetadata: {
         lastWebhookEvent: {
-          type: 'subscription_cancelled',
+          type: payload.event_type,
           timestamp: new Date().toISOString(),
         }
       },
       publicMetadata: {
         subscriptionStatus: 'cancelled',
-        subscriptionPlan: 'free',
-        premium: false
+        trialEndsAt: null
       }
     })
     
-    console.log('Subscription cancelled:', payload.subscription_id)
+    console.log('Subscription cancelled:', payload.data.subscription_id)
   } catch (error) {
     console.error('Error updating user metadata:', error)
     throw error
@@ -146,19 +148,20 @@ async function handleSubscriptionCancelled(clerk: any, payload: WebhookPayload) 
 
 async function handlePaymentSucceeded(clerk: any, payload: WebhookPayload) {
   try {
-    await clerk.users.updateUserMetadata(payload.user_id, {
+    await clerk.users.updateUserMetadata(payload.data.customer_id, {
       privateMetadata: {
         lastWebhookEvent: {
-          type: 'payment_succeeded',
+          type: payload.event_type,
           timestamp: new Date().toISOString(),
         }
       },
       publicMetadata: {
-        subscriptionStatus: 'active'
+        subscriptionStatus: 'active',
+        trialEndsAt: payload.data.next_bill_date || null
       }
     })
     
-    console.log('Payment succeeded:', payload.subscription_id)
+    console.log('Payment succeeded:', payload.data.subscription_id)
   } catch (error) {
     console.error('Error updating user metadata:', error)
     throw error
@@ -167,10 +170,10 @@ async function handlePaymentSucceeded(clerk: any, payload: WebhookPayload) {
 
 async function handlePaymentFailed(clerk: any, payload: WebhookPayload) {
   try {
-    await clerk.users.updateUserMetadata(payload.user_id, {
+    await clerk.users.updateUserMetadata(payload.data.customer_id, {
       privateMetadata: {
         lastWebhookEvent: {
-          type: 'payment_failed',
+          type: payload.event_type,
           timestamp: new Date().toISOString(),
         }
       },
@@ -179,7 +182,7 @@ async function handlePaymentFailed(clerk: any, payload: WebhookPayload) {
       }
     })
     
-    console.log('Payment failed:', payload.subscription_id)
+    console.log('Payment failed:', payload.data.subscription_id)
   } catch (error) {
     console.error('Error updating user metadata:', error)
     throw error

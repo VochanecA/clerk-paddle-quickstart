@@ -37,16 +37,14 @@ export default function PaddleCheckout() {
               try {
                 const customerId = event.data.customer.id
 
-                const response = await fetch('/api/user', {
+                // Update metadata through server endpoint
+                const response = await fetch('/api/user/checkout-complete', {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',
                   },
                   body: JSON.stringify({
-                    email: user.emailAddresses[0].emailAddress,
-                    subscriptionStatus: 'trial',
-                    reason: 'Completed initial checkout',
-                    paddleCustomerId: customerId
+                    customerId
                   })
                 })
 

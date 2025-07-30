@@ -14,8 +14,8 @@ export default function SignInPage() {
           baseTheme: dark,
         }}
         // Redirect URLs
-        fallbackRedirectUrl={`/welcome`}
-        signUpFallbackRedirectUrl={`/welcome`}
+        fallbackRedirectUrl={`/dashboard`}
+        signUpFallbackRedirectUrl={`/dashboard`}
         // Enable sign-up within the same component
         withSignUp={true}
       />
