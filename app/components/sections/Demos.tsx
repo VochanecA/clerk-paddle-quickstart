@@ -11,26 +11,30 @@ function FeatureList({ text }: { text: string }) {
   )
 }
 
-function VideoDemo({ title, description, videoId }: { title: string; description: string; videoId?: string }) {
+function VideoDemo({ 
+  title, 
+  description, 
+  videoSrc,
+  posterSrc
+}: { 
+  title: string
+  description: string
+  videoSrc: string
+  posterSrc: string
+}) {
   return (
     <div className="aspect-video rounded-2xl bg-white/[.02] border border-white/[.05] backdrop-blur-sm overflow-hidden">
-      {videoId ? (
-        <iframe
-          className="w-full h-full"
-          src={`https://www.youtube.com/embed/${videoId}`}
-          title={title}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        />
-      ) : (
-        <div className="w-full h-full flex items-center justify-center">
-          <div className="text-center p-8">
-            <div className="text-4xl mb-4">🎬</div>
-            <h3 className="text-xl font-semibold mb-2">{title}</h3>
-            <p className="text-zinc-400">{description}</p>
-          </div>
-        </div>
-      )}
+      <video 
+        className="w-full h-full"
+        autoPlay
+        loop
+        muted
+        playsInline
+        poster={posterSrc}
+      >
+        <source src={videoSrc} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
     </div>
   )
 }
@@ -67,6 +71,8 @@ export function Demos() {
             <VideoDemo 
               title="Authentication Flow"
               description="Complete walkthrough of the Clerk authentication implementation"
+              videoSrc="/Auth Demo.mp4"
+              posterSrc="/Auth-Demo-Img.png"
             />
             <div className="mt-8 space-y-3">
               <FeatureList text="User sign-up flow" />
@@ -81,6 +87,8 @@ export function Demos() {
             <VideoDemo 
               title="Subscription Flow"
               description="Step-by-step guide to implementing Paddle subscriptions"
+              videoSrc="/Demo - Billing.mp4"
+              posterSrc="/Demo-Billing-Img.png"
             />
             <div className="mt-8 space-y-3">
               <FeatureList text="Subscription plan setup" />
