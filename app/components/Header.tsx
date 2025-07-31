@@ -1,15 +1,51 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { SignedIn, SignedOut, UserButton, useUser } from '@clerk/nextjs'
 import { Button } from './Button'
 import { useRouter, usePathname } from 'next/navigation'
+import { SubscriptionPortalPage } from './SubscriptionPortalPage'
+import { CreditCard } from 'lucide-react'
 
 export function Header() {
   const router = useRouter()
   const pathname = usePathname()
-  const { isSignedIn } = useUser()
-  
+  const { isSignedIn, user } = useUser()
+  const [portalUrl, setPortalUrl] = useState<string | null>(null)
   const isAuthPage = pathname.startsWith('/sign-in') || pathname.startsWith('/sign-up')
+
+
+  // Fetch portal URL when component mounts
+  useEffect(() => {
+    const fetchPortalUrl = async () => {
+      if (!user?.emailAddresses?.[0]?.emailAddress) return;
+      
+      try {
+        const response = await fetch('/api/user/portal', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: user.emailAddresses[0].emailAddress
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to create portal session');
+        }
+
+        const { url } = await response.json();
+        setPortalUrl(url);
+      } catch (error) {
+        console.error('Error opening customer portal:', error);
+      }
+    };
+
+    if (isSignedIn) {
+      fetchPortalUrl();
+    }
+  }, [user, isSignedIn]);
   
   return (
     <header className="fixed top-0 left-0 right-0 z-50">
@@ -45,7 +81,15 @@ export function Header() {
                     avatarBox: "h-10 w-10"
                   }
                 }}
-              />
+              >
+                <UserButton.UserProfilePage 
+                  label="Subscription" 
+                  labelIcon={<CreditCard size={16}/>} 
+                  url="subscription"
+                >
+                  <SubscriptionPortalPage portalUrl={portalUrl} />
+                </UserButton.UserProfilePage>
+              </UserButton>
             </SignedIn>
           </div>
         </div>

@@ -1,4 +1,3 @@
-import { DashboardMetrics } from './components/DashboardMetrics'
 import { PremiumLock } from './components/PremiumLock'
 import { getSubscriptionStatus } from '../actions/subscription'
 import { currentUser } from '@clerk/nextjs/server'

@@ -10,9 +10,6 @@ export default function SignInPage() {
         <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-teal-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
       </div>
       <SignIn
-        appearance={{
-          baseTheme: dark,
-        }}
         // Redirect URLs
         fallbackRedirectUrl={`/dashboard`}
         signUpFallbackRedirectUrl={`/dashboard`}

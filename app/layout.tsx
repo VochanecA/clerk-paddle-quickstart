@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import { Header } from './components/Header'
 import { AuthSetup } from './components/AuthSetup'
 import './globals.css'
+import { dark } from '@clerk/themes'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -26,7 +27,11 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider 
+      appearance={{
+        baseTheme: dark,
+      }}
+    >
       <html lang="en">
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-950 text-white`}>
           <AuthSetup />
