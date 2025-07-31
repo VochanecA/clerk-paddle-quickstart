@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ⚡️ Next.js + Clerk + Paddle Starter
 
-## Getting Started
+Build your next SaaS in a weekend! This starter template gives you everything you need to start selling your SaaS subscription today:
 
-First, run the development server:
+- 🔐 Authentication? **Done!** (thanks [Clerk](https://clerk.com))
+- 💳 Billing? **Done!** (thanks [Paddle](https://paddle.com))
+- 🎨 Beautiful UI? **Done!** (thanks [Tailwind](https://tailwindcss.com))
+- 🚀 Performance? **Done!** (thanks [Next.js 15.4](https://nextjs.org))
 
+## ✨ Features
+
+- **Modern Stack**: Next.js 15.4 with Turbopack, React 19.1
+- **Authentication**: Email, social, session management
+- **Billing**: Checkout, customer portal, trials
+- **Beautiful UI**: Dark mode, animations, gradients
+- **Type-Safe**: 100% TypeScript
+- **Production-Ready**: Deploy anywhere
+
+## 🚀 Quick Start
+
+1. Clone & Install
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/yourusername/clerk-paddle-quickstart
+cd clerk-paddle-quickstart
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Set up your environment
+```bash
+cp .env.example .env.local
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Add your keys to `.env.local`:
+```bash
+# Clerk Auth
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_******
+CLERK_SECRET_KEY=sk_test_******
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Paddle Billing
+NEXT_PUBLIC_PADDLE_CLIENT_TOKEN=ptk_dev_******
+PADDLE_SECRET_KEY=psk_dev_******
+NEXT_PUBLIC_PADDLE_PRICE_ID=pri_******
+```
 
-## Learn More
+4. Start coding!
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+## 📚 Documentation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [Architecture Overview](docs/architecture.md)
+- [Clerk Integration](docs/clerk.md)
+- [Paddle Integration](docs/paddle.md)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🎥 Demo
 
-## Deploy on Vercel
+[Demo videos coming soon!]
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🛠 Coming Soon
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- 🔄 Paddle webhook handling
+- ✅ Webhook signature verification
+- 📊 Usage tracking
+- 📱 Mobile responsive enhancements
+
+## 📖 Learn More
+
+- [Clerk Documentation](https://clerk.com/docs)
+- [Paddle Documentation](https://paddle.com/docs)
+- [Next.js Documentation](https://nextjs.org/docs)
+
+## 📝 License
+
+MIT
