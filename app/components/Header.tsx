@@ -49,7 +49,7 @@ export function Header() {
   
   return (
     <header className="fixed top-0 left-0 right-0 z-50">
-        <div className="w-full flex h-16 items-center justify-between bg-black/[.02] backdrop-blur-xl border-b border-white/[.05] px-4 pr-12">
+        <div className="w-full flex h-16 items-center justify-between bg-black/[.02] backdrop-blur-xl border-b border-white/[.05] px-12">
           <button 
             onClick={() => {
               if (isSignedIn) {

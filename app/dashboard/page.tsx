@@ -15,8 +15,18 @@ export default async function DashboardPage() {
 
   return (
     <PremiumLock subscriptionStatus={subscriptionStatus}>
-      <div className="min-h-[calc(100vh-4rem)] p-8 pt-24">
-        <div className="max-w-7xl mx-auto space-y-8">
+      <div className="relative min-h-[calc(100vh-4rem)] p-8 pt-24">
+        {/* 3D Gradient Background */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_#10b981_0%,_#064e3b_50%,_#000_100%)] opacity-20" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,_transparent_0%,_#000_100%)] opacity-80" />
+        
+        {/* Floating Elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-1/2 left-1/4 w-96 h-96 bg-emerald-500/30 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute top-1/4 -right-1/4 w-96 h-96 bg-teal-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
+        </div>
+
+        <div className="relative max-w-7xl mx-auto space-y-8">
           {/* Fun Welcome Header */}
           <div>
             <div className="flex items-center gap-2 mb-2">
@@ -34,14 +44,14 @@ export default async function DashboardPage() {
 
           {/* Quick Stats */}
           <div className="flex flex-col md:flex-row gap-6">
-            <div className="bg-white/[.03] border border-white/[.05] rounded-xl p-6 flex-1">
+            <div className="bg-white/[.06] border border-white/10 rounded-2xl p-6 flex-1 backdrop-blur-2xl shadow-[inset_0px_0.5px_0px_rgba(255,255,255,0.1)] hover:bg-white/[.08] transition-all">
               <div className="flex items-center gap-3 mb-2">
-                <div className="bg-emerald-500/10 p-2 rounded-lg">
+                <div className="bg-emerald-500/10 p-2 rounded-lg backdrop-blur-xl">
                   <Sparkles className="w-5 h-5 text-emerald-500" />
                 </div>
-                <h3 className="font-medium">Trial Status</h3>
+                <h3 className="font-medium text-emerald-500/90">Trial Status</h3>
               </div>
-              <div className="text-2xl font-bold text-white mb-1">
+              <div className="text-2xl font-bold text-white/90 mb-1">
                 {subscriptionStatus?.trialEndsAt ? (
                   <>
                     {new Date(subscriptionStatus.trialEndsAt).toLocaleDateString('en-US', {
@@ -54,23 +64,23 @@ export default async function DashboardPage() {
               <p className="text-sm text-zinc-400">Trial end date (you got this! 💪)</p>
             </div>
 
-            <div className="bg-white/[.03] border border-white/[.05] rounded-xl p-6 flex-1">
+            <div className="bg-white/[.06] border border-white/10 rounded-2xl p-6 flex-1 backdrop-blur-2xl shadow-[inset_0px_0.5px_0px_rgba(255,255,255,0.1)] hover:bg-white/[.08] transition-all">
               <div className="flex items-center gap-3 mb-2">
-                <div className="bg-blue-500/10 p-2 rounded-lg">
+                <div className="bg-blue-500/10 p-2 rounded-lg backdrop-blur-xl">
                   <Rocket className="w-5 h-5 text-blue-500" />
                 </div>
-                <h3 className="font-medium">Build Streak</h3>
+                <h3 className="font-medium text-blue-500/90">Build Streak</h3>
               </div>
               <div className="text-2xl font-bold text-white mb-1">Day 1</div>
               <p className="text-sm text-zinc-400">Keep shipping! 🚢</p>
             </div>
 
-            <div className="bg-white/[.03] border border-white/[.05] rounded-xl p-6 flex-1">
+            <div className="bg-white/[.06] border border-white/10 rounded-2xl p-6 flex-1 backdrop-blur-2xl shadow-[inset_0px_0.5px_0px_rgba(255,255,255,0.1)] hover:bg-white/[.08] transition-all">
               <div className="flex items-center gap-3 mb-2">
-                <div className="bg-purple-500/10 p-2 rounded-lg">
+                <div className="bg-purple-500/10 p-2 rounded-lg backdrop-blur-xl">
                   <Trophy className="w-5 h-5 text-purple-500" />
                 </div>
-                <h3 className="font-medium">Builder Level</h3>
+                <h3 className="font-medium text-purple-500/90">Builder Level</h3>
               </div>
               <div className="text-2xl font-bold text-white mb-1">Rookie</div>
               <p className="text-sm text-zinc-400">The journey begins! 🌱</p>
@@ -80,8 +90,8 @@ export default async function DashboardPage() {
           {/* Fun Motivation Section and Quote */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Fun Motivation Section */}
-            <div className="bg-white/[.03] border border-white/[.05] rounded-xl p-8">
-              <h2 className="text-xl font-semibold mb-4">🎯 Today's Mission</h2>
+            <div className="bg-white/[.06] border border-white/10 rounded-2xl p-8 backdrop-blur-2xl shadow-[inset_0px_0.5px_0px_rgba(255,255,255,0.1)] hover:bg-white/[.08] transition-all">
+              <h2 className="text-xl font-semibold mb-4 text-white/90">🎯 Today's Mission</h2>
               <div className="space-y-4">
                 <div className="flex items-start gap-4">
                   <div className="w-5 h-5 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -114,7 +124,7 @@ export default async function DashboardPage() {
             </div>
 
             {/* Inspirational Quote */}
-            <div className="bg-gradient-to-r from-emerald-500/10 to-blue-500/10 rounded-xl p-8 border border-white/[.05] flex flex-col justify-center">
+            <div className="bg-white/[.04] rounded-2xl p-8 border border-white/10 backdrop-blur-2xl shadow-[inset_0px_0.5px_0px_rgba(255,255,255,0.1)] hover:bg-white/[.06] transition-all">
               <blockquote className="text-lg font-medium text-white/90">
                 "The best time to launch was yesterday. The second best time is today. 
                 The third best time is also today because who's counting anyway?"
