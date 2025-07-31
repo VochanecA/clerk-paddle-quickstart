@@ -20,16 +20,6 @@ export function Header() {
     const fetchPortalUrl = async () => {
       if (!user?.emailAddresses?.[0]?.emailAddress) return;
 
-      // If user has no subscription, don't show the portal button
-      const publicMetadata = user.publicMetadata || {};
-      const subscriptionStatus = typeof publicMetadata.subscriptionStatus === 'string'
-        ? publicMetadata.subscriptionStatus
-        : '';
-
-      if (subscriptionStatus === 'not_started') {
-        return;
-      }
-
       try {
         const response = await fetch('/api/user/portal', {
           method: 'POST',
@@ -41,12 +31,13 @@ export function Header() {
           })
         });
 
-        if (!response.ok) {
-          throw new Error('Failed to create portal session');
+        if (response.ok) {
+          const { url } = await response.json();
+          setPortalUrl(url);
+        } else {
+          // If user has no subscription, don't show the portal button
+          console.warn('Failed to create portal session');
         }
-
-        const { url } = await response.json();
-        setPortalUrl(url);
       } catch (error) {
         console.error('Error opening customer portal:', error);
       }
