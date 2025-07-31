@@ -19,7 +19,17 @@ export function Header() {
   useEffect(() => {
     const fetchPortalUrl = async () => {
       if (!user?.emailAddresses?.[0]?.emailAddress) return;
-      
+
+      // If user has no subscription, don't show the portal button
+      const publicMetadata = user.publicMetadata || {};
+      const subscriptionStatus = typeof publicMetadata.subscriptionStatus === 'string'
+        ? publicMetadata.subscriptionStatus
+        : '';
+
+      if (subscriptionStatus === 'not_started') {
+        return;
+      }
+
       try {
         const response = await fetch('/api/user/portal', {
           method: 'POST',
@@ -82,6 +92,7 @@ export function Header() {
                   }
                 }}
               >
+                {portalUrl && (
                 <UserButton.UserProfilePage 
                   label="Subscription" 
                   labelIcon={<CreditCard size={16}/>} 
@@ -89,6 +100,7 @@ export function Header() {
                 >
                   <SubscriptionPortalPage portalUrl={portalUrl} />
                 </UserButton.UserProfilePage>
+                )}
               </UserButton>
             </SignedIn>
           </div>
