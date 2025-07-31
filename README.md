@@ -55,7 +55,9 @@ npm run dev
 
 ## 🎥 Demo
 
-[Demo videos coming soon!]
+#### Auth Demo
+[![Auth Demo](https://github.com/hr23232323/clerk-paddle-quickstart/blob/main/public/Auth%20Demo.mp4?raw=true)
+
 
 ## 🛠 Coming Soon
 
