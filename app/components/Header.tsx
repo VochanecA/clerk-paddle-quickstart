@@ -5,12 +5,15 @@ import { Button } from './Button'
 import { useRouter, usePathname } from 'next/navigation'
 import { SubscriptionPortalPage } from './SubscriptionPortalPage'
 import { CreditCard, Layout } from 'lucide-react'
+import { PROJECT } from '../config/constants'
+
 export function Header() {
   const router = useRouter()
   const pathname = usePathname()
   const { isSignedIn, user } = useUser()
   const [portalUrl, setPortalUrl] = useState<string | null>(null)
   const isAuthPage = pathname.startsWith('/sign-in') || pathname.startsWith('/sign-up')
+
   // Fetch portal URL when component mounts
   useEffect(() => {
     const fetchPortalUrl = async () => {
@@ -29,7 +32,6 @@ export function Header() {
           const { url } = await response.json();
           setPortalUrl(url);
         } else {
-          // If user has no subscription, don't show the portal button
           console.warn('Failed to create portal session');
         }
       } catch (error) {
@@ -56,7 +58,7 @@ export function Header() {
           >
             <div className="w-2 h-2 rounded-full bg-emerald-500 group-hover:animate-pulse" />
             <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70 group-hover:to-emerald-500/70 transition-all duration-300">
-              Clerk + Paddle
+              {PROJECT.NAME}
             </span>
           </button>
          
@@ -78,15 +80,15 @@ export function Header() {
               >
                 <UserButton.MenuItems>
                   <UserButton.Link
-                    label="SimpleSignPDF Dashboard"
-                    labelIcon={<Layout size={16} />}
+                    label={`${PROJECT.NAME} Dashboard`}
+                    labelIcon={<Layout size={18} />}
                     href="/dashboard"
                   />
                 </UserButton.MenuItems>
                 {portalUrl && (
                 <UserButton.UserProfilePage
                   label="Subscription"
-                  labelIcon={<CreditCard size={16}/>}
+                  labelIcon={<CreditCard size={18} />}
                   url="subscription"
                 >
                   <SubscriptionPortalPage portalUrl={portalUrl} />
