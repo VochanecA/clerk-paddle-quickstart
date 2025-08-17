@@ -1,8 +1,11 @@
 'use client'
-
 import { useState } from 'react'
 import { createCheckoutSession } from '@/app/actions/subscription'
+import { useUser } from '@clerk/nextjs'
+import { useRouter } from 'next/navigation'
 import { SubscriptionStatus } from '@/lib/paddle/utils'
+import { getProPlan } from '@/lib/config/pricing'
+import { Check, Lock, Star } from 'lucide-react'
 
 interface PremiumLockProps {
   children: React.ReactNode
@@ -14,14 +17,17 @@ interface PremiumLockProps {
 
 export function PremiumLock({ children, subscriptionStatus }: PremiumLockProps) {
   const [isLoading, setIsLoading] = useState(false)
-  
+  const { isSignedIn } = useUser()
+  const router = useRouter()
+  const proPlan = getProPlan()
+ 
   // User has access if:
   // 1. Status is active, or
   // 2. Status is trial and trial hasn't ended
   const hasAccess = subscriptionStatus && (
     subscriptionStatus.status === 'active' ||
-    (subscriptionStatus.status === 'trial' && 
-      subscriptionStatus.trialEndsAt && 
+    (subscriptionStatus.status === 'trial' &&
+      subscriptionStatus.trialEndsAt &&
       new Date(subscriptionStatus.trialEndsAt) > new Date())
   )
 
@@ -31,6 +37,12 @@ export function PremiumLock({ children, subscriptionStatus }: PremiumLockProps) 
   }
 
   async function handleUpgradeClick() {
+    // Check if user is authenticated first
+    if (!isSignedIn) {
+      router.push('/sign-in')
+      return
+    }
+
     try {
       setIsLoading(true)
       const { checkoutUrl } = await createCheckoutSession()
@@ -46,26 +58,81 @@ export function PremiumLock({ children, subscriptionStatus }: PremiumLockProps) 
   return (
     <div className="relative group">
       {/* Blurred Content */}
-      <div className="filter blur-[2px] pointer-events-none opacity-50">
+      <div className="filter blur-[2px] pointer-events-none opacity-30">
         {children}
       </div>
 
       {/* Lock Overlay */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/20 backdrop-blur-sm">
-        <div className="bg-black/40 p-6 rounded-xl text-center max-w-md mx-auto">
-          <h3 className="text-xl font-semibold mb-2">Premium Feature</h3>
-          <p className="text-zinc-400 mb-4">
-            Upgrade your account to access this feature and much more.
-          </p>
-          <button
-            onClick={handleUpgradeClick}
-            disabled={isLoading}
-            className="bg-emerald-500 text-white px-4 py-2 rounded-lg hover:bg-emerald-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isLoading ? 'Loading...' : 'Upgrade Now'}
-          </button>
+      <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 backdrop-blur-sm">
+        <div className="relative max-w-md mx-auto p-8">
+          {/* Popular Badge */}
+          <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
+            <div className="bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-2 rounded-full flex items-center gap-2 text-sm font-medium">
+              <Star size={16} className="text-white" />
+              <span className="text-white">Most Popular</span>
+            </div>
+          </div>
+
+          {/* Hover Gradient */}
+          <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/[.1] to-teal-500/[.05] opacity-100 rounded-2xl" />
+         
+          {/* Card Content */}
+          <div className="relative p-8 rounded-2xl bg-black/60 backdrop-blur-sm border-2 border-emerald-500/30 text-center">
+            
+            {/* Header */}
+            <div className="mb-6">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <Lock size={24} className="text-emerald-500" />
+                <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">
+                  {proPlan.name}
+                </h3>
+              </div>
+              <p className="text-zinc-400 mb-4">{proPlan.description}</p>
+              
+              {/* Price */}
+              <div className="flex items-baseline justify-center gap-2 mb-6">
+                <span className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/80">
+                  {proPlan.price}
+                </span>
+                <span className="text-zinc-400 text-lg">{proPlan.period}</span>
+              </div>
+            </div>
+
+            {/* Key Features */}
+            <div className="mb-8">
+              <ul className="space-y-3 text-left">
+                {proPlan.features.slice(0, 4).map((feature, index) => (
+                  <li key={index} className="flex items-start gap-3">
+                    <div className="mt-1">
+                      <Check size={16} className="text-emerald-500 flex-shrink-0" />
+                    </div>
+                    <span className="text-zinc-300 text-sm">{feature}</span>
+                  </li>
+                ))}
+                {proPlan.features.length > 4 && (
+                  <li className="text-zinc-400 text-sm text-center pt-2">
+                    + {proPlan.features.length - 4} more features
+                  </li>
+                )}
+              </ul>
+            </div>
+
+            {/* Button */}
+            <button
+              onClick={handleUpgradeClick}
+              disabled={isLoading}
+              className="w-full py-4 px-6 rounded-xl font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-600 hover:to-teal-600 shadow-lg hover:shadow-emerald-500/25"
+            >
+              {isLoading ? 'Loading...' : proPlan.buttonText}
+            </button>
+
+            {/* Additional Info */}
+            <p className="text-zinc-500 text-xs mt-4">
+              14-day free trial • No credit card required
+            </p>
+          </div>
         </div>
       </div>
     </div>
   )
-} 
+}
